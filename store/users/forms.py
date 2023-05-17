@@ -109,12 +109,7 @@ class UserProfileForm(UserChangeForm):
     )
 
     image = forms.ImageField(
-        widget=forms.FileInput(
-            attrs={
-                "class": "custom-file-input",
-            }
-        )
-        required=False
+        widget=forms.FileInput(attrs={"class": "custom-file-input"}), required=False
     )
 
     username = forms.CharField(
