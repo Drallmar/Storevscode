@@ -1,6 +1,8 @@
-from django.shortcuts import render, HttpResponsePermanentRedirect
+from django.shortcuts import render, HttpResponseRedirect
 from django.contrib import auth
 from django.urls import reverse
+from django.contrib import messages
+
 
 from users.models import User
 from users.forms import UserLoginForm, UserRegistrationForm, UserProfileForm
@@ -15,7 +17,7 @@ def login(request):
             user = auth.authenticate(username=username, password=password)
             if user:
                 auth.login(request, user)
-                return HttpResponsePermanentRedirect(reverse("index"))
+                return HttpResponseRedirect(reverse("index"))
 
     else:
         form = UserLoginForm()
@@ -28,7 +30,8 @@ def register(request):
         form = UserRegistrationForm(data=request.POST)
         if form.is_valid():
             form.save()
-            return HttpResponsePermanentRedirect(reverse("users:login"))
+            messanges.success(request, 'Поздравдяем! Вы успешно зарегистрировались')
+            return HttpResponseRedirect(reverse("users:login"))
     else:
         form = UserRegistrationForm()
     context = {"form": form}
@@ -42,10 +45,15 @@ def profile(request):
         )
         if form.is_valid():
             form.save()
-            return HttpResponsePermanentRedirect(reverse("users:profile"))
+            return HttpResponseRedirect(reverse("users:profile"))
         else:
             print(form.errors)
     else:
         form = UserProfileForm(instance=request.user)
     context = {"title": "Store - Профиль", "form": form}
     return render(request, "users/profile.html", context)
+
+
+def logout(request):
+    auth.logout(request)
+    return HttpResponseRedirect(reverse('index'))
